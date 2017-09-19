@@ -47,17 +47,12 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.Qt import QRect, QMainWindow
 
 from location_view import LocationView
+from school_management import SchoolManagement
 
 
 # --------------------------------------------------------------------------- #
 # Define classes
 # --------------------------------------------------------------------------- #
-class SchoolManagement(QWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # TODO
-
-
 class Person(object):
     def __init__(self, forename):
         self.forename = forename
@@ -188,7 +183,8 @@ class MainWin(QMainWindow):
     def toggle_school_management(self):
         if self.stackWidget.currentIndex() is 1:
             self.stackWidget.setCurrentIndex(0)
-        self.stackWidget.setCurrentIndex(1)
+        else:
+            self.stackWidget.setCurrentIndex(1)
 
 
 # --------------------------------------------------------------------------- #
