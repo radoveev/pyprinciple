@@ -8,12 +8,13 @@ Copyright (C) 2017 Radomir Matveev GPL 3.0+
 # Import libraries
 # --------------------------------------------------------------------------- #
 from pathlib import Path
+from collections import OrderedDict
 
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton,
                              QFrame, QListView, QListWidget, QListWidgetItem,
                              QSizePolicy, QDialog, QGraphicsView, QTabWidget,
                              QTableWidget, QTableWidgetItem, QProgressBar,
-                             QTextEdit, QColumnView, QCheckBox,
+                             QTextEdit, QColumnView, QCheckBox, QComboBox,
                              QHBoxLayout, QVBoxLayout, QGridLayout,
                              QFormLayout,
                              QHeaderView, QSpacerItem)
@@ -465,7 +466,88 @@ class JobsTab(QWidget):
 class StudentsTab(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # TODO
+        self.biography = OrderedDict()
+        self.family = OrderedDict()
+        # create widgets
+        self.classes_lbl = QLabel(self)
+        self.class_list = QListView(self)
+        self.add_class_btn = QPushButton(self)
+        self.students_lbl = QLabel(self)
+        self.faves_only_chb = QCheckBox(self)
+        self.student_list = QListView(self)
+        self.name_lbl = QLabel("Jane Wayne", self)
+        self.sex_icon = QLabel(self)
+        self.age_lbl = QLabel(self)
+        self.birthday_lbl = QLabel(self)
+        self.personality_lbl = QLabel(self)
+        self.club_lbl = QLabel(self)
+        self.location_lbl = QLabel(self)
+        for key in ("age", "birthday", "personality", "club", "location"):
+            self.biography[key] = QLabel(self)
+        for key in ("father", "mother", "siblings"):
+            self.family[key] = QLabel(self)
+        self.grades_lbl = QLabel(self)
+        self.grades_list = cmn.QProgressList("StudentsTab", self)
+        for name in subjectName:
+            self.grades_list.addBar(name)
+        self.student_view = QGraphicsView(self)
+
+        # create layout
+#        classesbox = QVBoxLayout()
+#        classesbox.addWidget(self.classes_lbl)
+#        classesbox.addWidget(self.class_list)
+#        classesbox.addWidget(self.add_class_btn)
+
+        self.bio_form = QFormLayout()
+        for key, field in self.biography.items():
+            self.bio_form.addRow(key, field)
+
+        self.family_form = QFormLayout()
+        for key, field in self.family.items():
+            self.family_form.addRow(key, field)
+
+        layout = QGridLayout(self)
+        layout.addWidget(self.classes_lbl,      0, 0)
+        layout.addWidget(self.class_list,       1, 0, 3, 1)
+        layout.addWidget(self.add_class_btn,    4, 0)
+#        layout.addLayout(classesbox, 0, 0, -1, 1)
+        layout.addWidget(self.students_lbl,     0, 1)
+        layout.addWidget(self.faves_only_chb,   0, 2)
+        layout.addWidget(self.student_list,     1, 1, -1, 2)
+        layout.addWidget(self.name_lbl,         0, 3)
+        layout.addWidget(self.sex_icon,         0, 4)
+        layout.addLayout(self.bio_form,         1, 3)
+        layout.addLayout(self.family_form,      1, 4)
+        layout.addWidget(self.grades_lbl,       2, 3)
+        layout.addWidget(self.grades_list,      3, 3, -1, 2)
+        layout.addWidget(self.student_view,     0, 5, -1, 1)
+
+        layout.setColumnStretch(0, 2)
+        layout.setColumnStretch(1, 1)
+        layout.setColumnStretch(2, 1)
+        layout.setColumnStretch(3, 2)
+        layout.setColumnStretch(4, 2)
+        layout.setColumnStretch(5, 4)
+
+        # configure widgets
+        self.retranslateUi()
+        sizepol = self.add_class_btn.sizePolicy()
+        sizepol.setHorizontalPolicy(QSizePolicy.Fixed)
+        self.add_class_btn.setSizePolicy(sizepol)
+
+    def retranslateUi(self):
+        tra = QApplication.translate
+        ctxt = "StudentsTab"
+        self.classes_lbl.setText(tra(ctxt, "Classes"))
+        self.add_class_btn.setText(tra(ctxt, "Add class"))
+        self.students_lbl.setText(tra(ctxt, "Students"))
+        self.faves_only_chb.setText(tra(ctxt, "Show only favorites"))
+        bio_labels = [key.capitalize() + ":" for key in self.biography]
+        family_labels = [key.capitalize() + ":" for key in self.family]
+        cmn.translate_form(self.bio_form, ctxt, bio_labels)
+        cmn.translate_form(self.family_form, ctxt, family_labels)
+        self.grades_lbl.setText(tra(ctxt, "Subject Scoring"))
+        self.grades_list.retranslateUi()
 
 
 class SchoolManagement(QWidget):
@@ -491,7 +573,7 @@ class SchoolManagement(QWidget):
 #        self.mainTab.setGeometry(geom)
         self.mainTab.setContentsMargins(0, 0, 0, 0)
         # TODO: translate
-#        self.mainTab.addTab(self.studentsTab, "Students")
+        self.mainTab.addTab(self.studentsTab, "Students")
         self.mainTab.addTab(self.jobsTab, "Jobs")
         self.mainTab.addTab(self.assnTab, "Teacher Assignments")
         self.mainTab.addTab(self.policyTab, "School Policy")
