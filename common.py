@@ -65,6 +65,10 @@ class WorldInterface(QObject):
         return ("7:50 - 9:20", "9:40 - 11:10", "11:30 - 13:00",
                 "14:30 - 16:00")
 
+    def classNames(self):
+        """Return the names of all classes of the school."""
+        return ("Class 1", "Class 2")
+
 
 # --------------------------------------------------------------------------- #
 # Define functions

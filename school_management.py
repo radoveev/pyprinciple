@@ -15,14 +15,16 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton,
                              QSizePolicy, QDialog, QGraphicsView, QTabWidget,
                              QTableWidget, QTableWidgetItem, QProgressBar,
                              QTextEdit, QColumnView, QCheckBox, QComboBox,
+                             QItemEditorFactory, QStyledItemDelegate,
                              QHBoxLayout, QVBoxLayout, QGridLayout,
                              QFormLayout,
-                             QHeaderView, QSpacerItem)
-from PyQt5.QtCore import Qt, pyqtSlot, QRect, QLocale
+                             QTableView, QHeaderView, QSpacerItem)
+from PyQt5.QtCore import (Qt, pyqtSlot, QRect, QLocale, QVariant,
+                          QAbstractTableModel, QModelIndex)
 from PyQt5.QtGui import QBrush, QColor, QPalette, QFont, QPainter
 from PyQt5.QtChart import QChart, QChartView, QLineSeries
 
-from widgets import QPixmapLabel
+from widgets import QPixmapLabel, QEditableTableModel
 import common as cmn
 import style
 
@@ -463,6 +465,73 @@ class JobsTab(QWidget):
         cmn.translate_form(self.subjectform, "JobsTab", subjectFamilies)
 
 
+class TimeTableDelegate(QStyledItemDelegate):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def createEditor(self, parent, option, index):
+        combo = QComboBox(parent)
+        combo.setEditable(False)
+        combo.addItems(subjectName)
+        model = parent.parent().model()
+        displayed = model.data(index)
+        combo.setCurrentText(displayed)
+        return combo
+
+#    def setEditorData(self, editor, index):
+#        super().setEditorData(editor, index)
+
+    def setModelData(self, editor, model, index):
+        model.setData(index, editor.currentText(), Qt.DisplayRole)
+
+
+class TimeTableModel(QEditableTableModel):
+    def __init__(self, parent=None):
+        super().__init__(world.schoolDays(), world.timeTablePeriods(), parent)
+
+        # TODO: also add Qt.ToolTipRole and maybe Qt.WhatsThisRole to headers
+        # add data
+        for row in range(self.rowCount()):
+            for col in range(self.columnCount()):
+                item = self.createItem()
+#                item.setData(subjectName[0], Qt.DisplayRole)
+#                item.setData(subjectName[0], Qt.EditRole)
+                item.setData("Double-click to edit", Qt.ToolTipRole)
+                self.datamap[(row, col)] = item
+
+
+class ClassesTab(QWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+#        self.daymap = OrderedDict()  # maps days to
+        # create widgets
+        self.active_class = QComboBox(self)
+        self.timetable = QTableView(self)
+
+        # create layout
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.active_class)
+        layout.addWidget(self.timetable)
+
+        # configure widgets
+        self.active_class.addItems(world.classNames())
+        self.timetable.setModel(TimeTableModel())
+        self.timetable.setCornerButtonEnabled(False)
+        self.timetable.setShowGrid(False)
+        self.timetable.setSortingEnabled(False)
+
+        # configure widgets
+        self.timetable.setItemDelegate(TimeTableDelegate())
+#        delegate = self.timetable.itemDelegate()
+#        delegate.setItemEditorFactory(TimeTableEditorFactory())
+#        factory = delegate.itemEditorFactory()
+#        if factory is None:
+#            factory = QItemEditorFactory.defaultFactory()
+#        print("factory", factory)
+#        factory.registerEditor()
+#        delegate.setItemEditorFactory()
+
+
 class StudentsTab(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -556,6 +625,7 @@ class SchoolManagement(QWidget):
         # create widgets
         self.mainTab = QTabWidget(self)
         self.studentsTab = StudentsTab()
+        self.classesTab = ClassesTab()
         self.jobsTab = JobsTab()
         self.assnTab = AssignmentsTab()
         self.policyTab = PolicyTab()
@@ -573,6 +643,7 @@ class SchoolManagement(QWidget):
 #        self.mainTab.setGeometry(geom)
         self.mainTab.setContentsMargins(0, 0, 0, 0)
         # TODO: translate
+        self.mainTab.addTab(self.classesTab, "Classes")
         self.mainTab.addTab(self.studentsTab, "Students")
         self.mainTab.addTab(self.jobsTab, "Jobs")
         self.mainTab.addTab(self.assnTab, "Teacher Assignments")
@@ -608,6 +679,7 @@ class SchoolManagement(QWidget):
 # --------------------------------------------------------------------------- #
 # Define module globals
 # --------------------------------------------------------------------------- #
+world = cmn.world
 # TODO: fetch data from scenario
 teacher = ("April Raymund", "Beth Manili", "Carl Walker", "Carmen Smith",
            "Claire Fuzushi", "Jessica Underwood", "Nina Parker",
