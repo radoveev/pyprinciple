@@ -19,10 +19,13 @@ from PyQt5.QtCore import QObject
 class QProgressList(QWidget):
     """A list of progress bars with icons and labels.
     """
-    def __init__(self, translation_context, parent=None):
+    def __init__(self, translation_context=None, parent=None):
         super().__init__(parent)
         assert isinstance(translation_context, str), "not a string"
-        self.translation_context = translation_context
+        if translation_context is None:
+            self.translation_context = type(self).__name__
+        else:
+            self.translation_context = translation_context
         self.labelmap = {}  # maps label texts to (icon, label, bar) tuples
         # create layout
         self.layout = QGridLayout(self)
