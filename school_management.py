@@ -506,21 +506,29 @@ class ClassesTab(QWidget):
 #        self.daymap = OrderedDict()  # maps days to
         # create widgets
         self.active_class = QComboBox(self)
-        self.timetable = QTableView(self)
+        self.tabs = QTabWidget(self)
+        self.timetable = QTableView()
+        self.grades_list = cmn.QProgressList("ClassesTab")
+        for name in subjectName:
+            self.grades_list.addBar(name)
 
         # create layout
+        self.tabs.addTab(self.timetable, "Timetable")
+        self.tabs.addTab(self.grades_list, "Summary")
         layout = QVBoxLayout(self)
         layout.addWidget(self.active_class)
-        layout.addWidget(self.timetable)
+        layout.addWidget(self.tabs)
 
         # configure widgets
         self.active_class.addItems(world.classNames())
+        self.tabs.setTabPosition(QTabWidget.West)
         self.timetable.setModel(TimeTableModel())
         self.timetable.setCornerButtonEnabled(False)
         self.timetable.setShowGrid(False)
         self.timetable.setSortingEnabled(False)
 
         # configure widgets
+        self.retranslateUi()
         self.timetable.setItemDelegate(TimeTableDelegate())
 #        delegate = self.timetable.itemDelegate()
 #        delegate.setItemEditorFactory(TimeTableEditorFactory())
@@ -530,6 +538,13 @@ class ClassesTab(QWidget):
 #        print("factory", factory)
 #        factory.registerEditor()
 #        delegate.setItemEditorFactory()
+
+    def retranslateUi(self):
+        tra = QApplication.translate
+        ctxt = "ClassesTab"
+        self.tabs.setTabText(0, tra(ctxt, "Timetable"))
+        self.tabs.setTabText(1, tra(ctxt, "Summary"))
+        self.grades_list.retranslateUi()
 
 
 class StudentsTab(QWidget):
