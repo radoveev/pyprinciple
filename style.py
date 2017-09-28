@@ -47,3 +47,10 @@ bg = QBrush(QColor(25, 45, 52, 255))
 white_text = SimplePalette(white, gray)
 hdr_text = SimplePalette(gray, dark_gray)
 progress_bar = ProgressStyle(QColor(50, 200, 50, 255))
+people_list_style = """color: rgb(255, 110, 249);
+    selection-color: rgb(255, 110, 249);
+    selection-background-color: rgb(10, 36, 106);
+    background-color: qlineargradient(spread:reflect,
+                                      x1:0.495, y1:0, x2:1, y2:0,
+                                      stop:0.409574 rgba(19, 34, 39, 255),
+                                      stop:1 rgba(25, 45, 52, 255));"""

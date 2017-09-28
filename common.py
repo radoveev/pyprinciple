@@ -7,6 +7,8 @@ Copyright (C) 2017 Radomir Matveev GPL 3.0+
 # --------------------------------------------------------------------------- #
 # Import libraries
 # --------------------------------------------------------------------------- #
+from pathlib import Path
+
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QProgressBar,
                              QFormLayout, QGridLayout)
 from PyQt5.QtCore import QObject
@@ -58,6 +60,17 @@ class WorldInterface(QObject):
     """
     def __init__(self):
         super().__init__()
+        self.button_data = {
+                "Your Home": (("Paperwork:\nManage School", (125, 370)),
+                              ("Kitchen:\nOpen Fridge", (100, 250)),
+                              ("Video Library:\nOpen Library", (650, 380)),
+                              ("Computer", (850, 400))
+                              )
+                }
+        self.location_images = {
+                "Your Home": ("../Schools/NormalSchool/Images/Locations/" +
+                              "Your Home/empty.jpg")
+                }
 
     def schoolDays(self):
         """Returns a tuple of days were the school is open."""
@@ -107,6 +120,17 @@ class WorldInterface(QObject):
                 ("Secret Panty Exchange sales", 384),
                 ("Your Sister's rent", 400)
                 )
+
+    def locationButtons(self, location):
+        """Return the buttons for the given location."""
+        return self.button_data[location]
+
+    def locationImage(self, location):
+        """Return the image for the given location."""
+        path = Path(QApplication.applicationDirPath())
+        path = path / self.location_images[location]
+        path.resolve()
+        return path
 
 
 # --------------------------------------------------------------------------- #
