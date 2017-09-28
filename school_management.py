@@ -12,8 +12,8 @@ from collections import OrderedDict
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton,
                              QListView, QListWidget, QListWidgetItem,
                              QSizePolicy, QGraphicsView, QTabWidget,
-                             QTableWidget, QTableWidgetItem, QProgressBar,
-                             QTextEdit, QColumnView, QCheckBox, QComboBox,
+                             QTableWidget, QTableWidgetItem, QColumnView,
+                             QPlainTextEdit, QCheckBox, QComboBox,
                              QStyledItemDelegate, QTableView, QHeaderView,
                              QHBoxLayout, QVBoxLayout, QGridLayout,
                              QFormLayout)
@@ -32,13 +32,11 @@ import style
 class StatsTab(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-#        self.dataseries = []  # list of QLineSeries dummy data
-#        self.dataitems = []  # list of QListWidgetItem
         self.seriesmap = {}  # map items to series
         # create widgets
-        self.statList = QListWidget(self)
+        self.stat_list = QListWidget(self)
         chart = QChart()
-        self.chartView = QChartView(chart, self)
+        self.chart_view = QChartView(chart, self)
 
         for i in range(30):
             series = QLineSeries(self)
@@ -56,33 +54,35 @@ class StatsTab(QWidget):
                 series.hide()
 
             chart.addSeries(series)
-            self.statList.addItem(item)
+            self.stat_list.addItem(item)
             self.seriesmap[i] = series
 
         # create layout
         layout = QHBoxLayout(self)
-        layout.addWidget(self.statList)
-        layout.addWidget(self.chartView)
-        layout.setStretchFactor(self.chartView, 3)
+        layout.addWidget(self.stat_list)
+        layout.addWidget(self.chart_view)
+        layout.setStretchFactor(self.chart_view, 3)
 
         # configure widgets
         chart.legend().hide()
         chart.createDefaultAxes()
         chart.setTitle("Daily aggregated stats of your school")
-        self.chartView.setRenderHint(QPainter.Antialiasing)
+        self.chart_view.setRenderHint(QPainter.Antialiasing)
+        self.retranslateUi()
 
         # connect signals
-        self.statList.itemClicked.connect(self.on_stat_clicked)
+        self.stat_list.itemClicked.connect(self.on_stat_clicked)
+
+    def retranslateUi(self):
+        chart = self.chart_view.chart()
+        chart.setTitle(QApplication.translate(
+                "StatsTab", "Daily aggregated stats of your school"))
 
     @pyqtSlot(QListWidgetItem)
     def on_stat_clicked(self, item):
         key = item.data(Qt.UserRole)
         series = self.seriesmap[key]
         series.setVisible(not series.isVisible())
-#        if series.isVisible():
-#            series.hide()
-#        else:
-#            series.show()
 
 
 class AccountingTab(QWidget):
@@ -97,15 +97,14 @@ class AccountingTab(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # create widgets
-        self.table = QTableWidget(len(balanceItem), 4, self)
-        self.balanceLbl = QLabel(self)
-        self.balanceVal = QLabel(self)
-#        vertStretch = QSpacerItem()
+        self.table = QTableWidget(len(world.balanceItems()), 4, self)
+        self.balance_lbl = QLabel(self)
+        self.balance_val = QLabel(self)
 
         # create layouts
         layout = QGridLayout(self)
-        layout.addWidget(self.balanceLbl, 0, 0, 1, 1)
-        layout.addWidget(self.balanceVal, 0, 1, 1, 1)
+        layout.addWidget(self.balance_lbl, 0, 0, 1, 1)
+        layout.addWidget(self.balance_val, 0, 1, 1, 1)
         self.table.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         layout.addWidget(self.table, 1, 0, 20, 30)
 
@@ -127,11 +126,11 @@ class AccountingTab(QWidget):
 
     def retranslateUi(self):
         tra = QApplication.translate
-        self.balanceLbl.setText(tra("AccountingTab", "Monthly Loss:"))
-        self.balanceVal.setText(tra("AccountingTab", "-$10,000"))
+        self.balance_lbl.setText(tra("AccountingTab", "Monthly Loss:"))
+        self.balance_val.setText(tra("AccountingTab", "-$10,000"))
         red = QColor(200, 0, 0)
         black = QColor(0, 0, 0)
-        for i, data in enumerate(zip(balanceItem, balanceItemExample)):
+        for i, data in enumerate(world.balanceItems()):
             name, val = data
             item = QTableWidgetItem(tra("AccountingTab", name))
             item.setForeground(QBrush(red if val < 0 else black))
@@ -216,41 +215,32 @@ class ClubsTab(QWidget):
 class ExpansionsTab(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-#        grid = QGridLayout()
-#        self.expansionList = QListView()
-#        self.upgradeCostLbl = QLabel()
-#        self.upgradeCostVal = QLabel()
-#        self.maintenanceCostLbl = QLabel()
-#        self.maintenanceCostVal = QLabel()
-#        self.upgradeBtn = QPushButton()
-#        self.expansionViewLbl = QLabel()
-#        self.lowInfoLbl = QLabel()
 
-        self.costform = QFormLayout()
+        self.cost_form = QFormLayout()
         # create widgets
-        self.upgradebtn = QPushButton(self)
-        self.expansionimage = QPixmapLabel(self)
+        self.upgrade_btn = QPushButton(self)
+        self.expansion_img = QPixmapLabel(self)
         self.upgrade_cost_lbl = QLabel(self)
         self.maintenance_cost_lbl = QLabel(self)
-        self.expansionlist = QListView(self)
-        self.expansiontext = QTextEdit(self)
+        self.expansion_list = QListView(self)
+        self.expansion_text = QPlainTextEdit(self)
 
         # create layout
-        self.costform.addRow("Upgrade cost", self.upgrade_cost_lbl)
-        self.costform.addRow("Maintenance cost", self.maintenance_cost_lbl)
+        self.cost_form.addRow("Upgrade cost", self.upgrade_cost_lbl)
+        self.cost_form.addRow("Maintenance cost", self.maintenance_cost_lbl)
 
         btnbox = QHBoxLayout()
-        btnbox.addWidget(self.upgradebtn)
-        btnbox.addLayout(self.costform)
+        btnbox.addWidget(self.upgrade_btn)
+        btnbox.addLayout(self.cost_form)
 
         leftbox = QVBoxLayout()
         leftbox.addLayout(btnbox)
-        leftbox.addWidget(self.expansionlist)
-        leftbox.addWidget(self.expansiontext)
+        leftbox.addWidget(self.expansion_list)
+        leftbox.addWidget(self.expansion_text)
 
         layout = QHBoxLayout(self)
         layout.addLayout(leftbox)
-        layout.addWidget(self.expansionimage)
+        layout.addWidget(self.expansion_img)
 
         # configure widgets
         self.retranslateUi()
@@ -259,10 +249,12 @@ class ExpansionsTab(QWidget):
     def retranslateUi(self):
         tra = QApplication.translate
         ctxt = "ExpansionsTab"  # the translation context
-        self.upgradebtn.setText(tra(ctxt, "Upgrade"))
-        cmn.translate_form(self.costform, ctxt,
+        self.upgrade_btn.setText(tra(ctxt, "Upgrade"))
+        cmn.translate_form(self.cost_form, ctxt,
                            ("Upgrade cost", "Maintenance cost")
                            )
+        self.expansion_text.setPlainText(tra("SchoolManagement",
+                                             "No description available"))
 
 
 class PolicyTab(QWidget):
@@ -273,7 +265,7 @@ class PolicyTab(QWidget):
 #        self.topic_lbl = QLabel(self)
 #        self.rule_lbl = QLabel(self)
         self.policy_view = QColumnView(self)
-        self.policy_text = QTextEdit(self)
+        self.policy_text = QPlainTextEdit(self)
 
         # create layout
         layout = QVBoxLayout(self)
@@ -295,7 +287,8 @@ class PolicyTab(QWidget):
         self.explanation_lbl.setText(tra(ctxt, infotxt))
 #        self.topic_lbl.setText(tra(ctxt, "Topic"))
 #        self.rule_lbl.setText(tra(ctxt, "Rule"))
-        # TODO: translate policy text
+        self.policy_text.setPlainText(tra("SchoolManagement",
+                                          "No description available"))
 
 
 class AssignmentsTab(QWidget):
@@ -305,32 +298,34 @@ class AssignmentsTab(QWidget):
         self.chbmap = {}  # maps checkbox ids to teacher, subject tuples
         # create widgets
         self.explanation_lbl = QLabel(self)
-        self.table = QTableWidget(len(subjectName), len(teacher), self)
-        for r in range(len(subjectName)):
-            for c in range(len(teacher)):
+        # TODO maybe a simple grid layout would be better?
+        teachers = world.teachers()
+        subjects = world.subjects()
+        self.table = QTableWidget(len(subjects),
+                                  len(teachers),
+                                  self)
+        for r in range(len(subjects)):
+            for c in range(len(teachers)):
                 chb = QCheckBox(self.table)
                 self.table.setCellWidget(r, c, chb)
-                self.chbmap[chb] = (teacher[c], subjectName[r])
-        self.nameLbl = QLabel(self)
-        self.subjNameLbl = QLabel(self)
-        self.subjExpLbl = QLabel(self)
-        self.genQualfLbl = QLabel(self)
-        self.subjExpPB = QProgressBar(self)
-        self.genQualfPB = QProgressBar(self)
+                self.chbmap[chb] = (teachers[c], subjects[r])
+        self.qualification_lbl = QLabel(self)
+        self.qualification_list = cmn.QProgressList(
+                translation_context="AssignmentsTab",
+                parent=self
+                )
+        self.qualification_list.addBar("Subject experience")
+        self.qualification_list.addBar("General qualification")
 
         # create layout
         subjectgrid = QGridLayout()
-        subjectgrid.addWidget(self.nameLbl,     0, 0, 1, 2)
-        subjectgrid.addWidget(self.subjNameLbl, 0, 4, 1, 1)
-        subjectgrid.addWidget(self.subjExpLbl,  1, 1, 1, 1)
-        subjectgrid.addWidget(self.subjExpPB,   1, 2, 1, 3)
-        subjectgrid.addWidget(self.genQualfLbl, 2, 1, 1, 1)
-        subjectgrid.addWidget(self.genQualfPB,  2, 2, 1, 3)
-
+        subjectgrid.addWidget(self.qualification_lbl,     0, 0, 1, 2)
         layout = QVBoxLayout(self)
         layout.addWidget(self.explanation_lbl)
         layout.addWidget(self.table, 2)  # set stretch factor to 2
         layout.addLayout(subjectgrid)
+        layout.addWidget(self.qualification_lbl)
+        layout.addWidget(self.qualification_list)
 
         # configure widgets
         self.retranslateUi()
@@ -343,26 +338,22 @@ class AssignmentsTab(QWidget):
                         1px solid white; background: rgb(25, 45, 52);
                         color:white;}
                 """)
-#        minimum = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-#        self.table.setSizePolicy(minimum)
-#        preferred = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-#        self.table.setSizePolicy(preferred)
         self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.table.setHorizontalHeaderLabels(teacher)
-        self.table.setVerticalHeaderLabels(subjectName)
+        self.table.setHorizontalHeaderLabels(teachers)
+        self.table.setVerticalHeaderLabels(subjects)
         # TODO: icons
 
-        self.nameLbl.setPalette(style.white_text)
-        self.subjNameLbl.setPalette(style.white_text)
-        self.subjExpLbl.setPalette(style.white_text)
-        self.subjExpPB.setPalette(style.progress_bar)
-        self.subjExpPB.setValue(60)
-        self.subjExpPB.setTextVisible(False)
-        self.genQualfLbl.setPalette(style.white_text)
-        self.genQualfPB.setPalette(style.progress_bar)
-        self.genQualfPB.setValue(60)
-        self.genQualfPB.setTextVisible(False)
+#        self.qualification_lbl.setPalette(style.white_text)
+#        self.subjNameLbl.setPalette(style.white_text)
+#        self.subjExpLbl.setPalette(style.white_text)
+#        self.subjExpPB.setPalette(style.progress_bar)
+#        self.subjExpPB.setValue(60)
+#        self.subjExpPB.setTextVisible(False)
+#        self.genQualfLbl.setPalette(style.white_text)
+#        self.genQualfPB.setPalette(style.progress_bar)
+#        self.genQualfPB.setValue(60)
+#        self.genQualfPB.setTextVisible(False)
 
     def retranslateUi(self):
         tra = QApplication.translate
@@ -386,18 +377,14 @@ class AssignmentsTab(QWidget):
 "is allowed to teach."
                    )
         self.explanation_lbl.setText(tra(ctxt, infotxt))
-        # TODO: translate labels from lower grid layout
+        self.qualification_lbl.setText(tra(ctxt, "Teaching experience"))
+        self.qualification_list.retranslateUi()
 
 
 class JobsTab(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.subLbl = []  # labels for subject name array
-        self.avgSubjExpVal = []
-        self.teacherDisplay = QGraphicsView()
-
-        self.subj_exp_bars = []  # list of subject experience progress bars
         # create widgets
         self.applicants_lbl = QLabel(self)
         self.applicants_list = QListView(self)
@@ -407,20 +394,18 @@ class JobsTab(QWidget):
         self.income_lbl = QLabel(self)
         self.salary_lbl = QLabel(self)
         self.biography_lbl = QLabel(self)
-        self.biography_val = QLabel(self)
-        self.avgSubjExpHdrLbl = QLabel(self)
-        for name in subjectFamilies:
-            self.subj_exp_bars.append(QProgressBar(self))
+        self.biography_text = QPlainTextEdit(self)
+        self.subj_exp_lbl = QLabel(self)
+        self.subj_exp_list = cmn.QProgressList(
+                translation_context="school subject families", parent=self)
+        for name in world.subjectFamilies():
+            self.subj_exp_list.addBar(name)
         self.teacher_view = QGraphicsView(self)
 
         # create layout
         self.balanceform = QFormLayout()
         self.balanceform.addRow("Monthly Income:", self.income_lbl)
         self.balanceform.addRow("Staff Salary:", self.salary_lbl)
-
-        self.subjectform = QFormLayout()
-        for name, bar in zip(subjectFamilies, self.subj_exp_bars):
-            self.subjectform.addRow(name, bar)
 
         layout = QGridLayout(self)
         layout.addWidget(self.applicants_lbl,   0, 0, 1, 1)
@@ -430,9 +415,9 @@ class JobsTab(QWidget):
         layout.addWidget(self.staff_list,       1, 4, 5, 1)
         layout.addWidget(self.hire_btn,         3, 2, 1, 1)
         layout.addWidget(self.biography_lbl,    6, 0)
-        layout.addWidget(self.biography_val,    7, 0, 1, 3)
-        layout.addWidget(self.avgSubjExpHdrLbl, 8, 0)
-        layout.addLayout(self.subjectform,      9, 0, -1, 2)
+        layout.addWidget(self.biography_text,   7, 0, 1, 3)
+        layout.addWidget(self.subj_exp_lbl,     8, 0)
+        layout.addWidget(self.subj_exp_list,    9, 0, -1, 2)
         layout.addWidget(self.teacher_view,     6, 4, -1, -1)
 
         # configure widgets
@@ -440,12 +425,12 @@ class JobsTab(QWidget):
 
         # TODO: set background of tab to dark color
         self.biography_lbl.setPalette(style.white_text)
-        self.biography_val.setAlignment(Qt.AlignTop)
-        self.avgSubjExpHdrLbl.setPalette(style.white_text)
-        for bar in self.subj_exp_bars:
-            bar.setPalette(style.progress_bar)
-            bar.setValue(60)
-            bar.setTextVisible(False)
+#        self.biography_text.setAlignment(Qt.AlignTop)
+        self.subj_exp_lbl.setPalette(style.white_text)
+#        for bar in self.subj_exp_bars:
+#            bar.setPalette(style.progress_bar)
+#            bar.setValue(60)
+#            bar.setTextVisible(False)
         self.teacher_view.setStyleSheet("background: transparent")
 
     def retranslateUi(self):
@@ -454,12 +439,15 @@ class JobsTab(QWidget):
         self.staff_lbl.setText(tra("JobsTab", "Hired Staff"))
         self.hire_btn.setText(tra("JobsTab", "Hire"))
         self.biography_lbl.setText(tra("JobsTab", "Biography:"))
-        self.avgSubjExpHdrLbl.setText(tra("JobsTab",
-                                          "Average Subject Family Experience"))
-        # TODO: translate biography_val
+        self.biography_text.setPlainText(
+                tra("JobsTab", "No biography available")
+                )
+        self.subj_exp_lbl.setText(
+                tra("JobsTab", "Average Subject Family Experience")
+                )
         cmn.translate_form(self.balanceform, "JobsTab",
                            ("Monthly Income:", "Staff Salary:"))
-        cmn.translate_form(self.subjectform, "JobsTab", subjectFamilies)
+        self.subj_exp_list.retranslateUi()
 
 
 class TimeTableDelegate(QStyledItemDelegate):
@@ -469,7 +457,7 @@ class TimeTableDelegate(QStyledItemDelegate):
     def createEditor(self, parent, option, index):
         combo = QComboBox(parent)
         combo.setEditable(False)
-        combo.addItems(subjectName)
+        combo.addItems(world.subjects())
         model = parent.parent().model()
         displayed = model.data(index)
         combo.setCurrentText(displayed)
@@ -491,8 +479,8 @@ class TimeTableModel(QEditableTableModel):
         for row in range(self.rowCount()):
             for col in range(self.columnCount()):
                 item = self.createItem()
-#                item.setData(subjectName[0], Qt.DisplayRole)
-#                item.setData(subjectName[0], Qt.EditRole)
+#                item.setData(world.subjects()[0], Qt.DisplayRole)
+#                item.setData(world.subjects()[0], Qt.EditRole)
                 item.setData("Double-click to edit", Qt.ToolTipRole)
                 self.datamap[(row, col)] = item
 
@@ -505,8 +493,9 @@ class ClassesTab(QWidget):
         self.active_class = QComboBox(self)
         self.tabs = QTabWidget(self)
         self.timetable = QTableView()
-        self.grades_list = cmn.QProgressList("ClassesTab")
-        for name in subjectName:
+        self.grades_list = cmn.QProgressList(
+                translation_context="school subjects")
+        for name in world.subjects():
             self.grades_list.addBar(name)
 
         # create layout
@@ -517,7 +506,7 @@ class ClassesTab(QWidget):
         layout.addWidget(self.tabs)
 
         # configure widgets
-        self.active_class.addItems(world.classNames())
+        self.active_class.addItems(world.classes())
         self.tabs.setTabPosition(QTabWidget.West)
         self.timetable.setModel(TimeTableModel())
         self.timetable.setCornerButtonEnabled(False)
@@ -532,7 +521,6 @@ class ClassesTab(QWidget):
 #        factory = delegate.itemEditorFactory()
 #        if factory is None:
 #            factory = QItemEditorFactory.defaultFactory()
-#        print("factory", factory)
 #        factory.registerEditor()
 #        delegate.setItemEditorFactory()
 
@@ -568,8 +556,9 @@ class StudentsTab(QWidget):
         for key in ("father", "mother", "siblings"):
             self.family[key] = QLabel(self)
         self.grades_lbl = QLabel(self)
-        self.grades_list = cmn.QProgressList("StudentsTab", self)
-        for name in subjectName:
+        self.grades_list = cmn.QProgressList(
+                translation_context="school subjects", parent=self)
+        for name in world.subjects():
             self.grades_list.addBar(name)
         self.student_view = QGraphicsView(self)
 
@@ -635,48 +624,43 @@ class SchoolManagement(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # create widgets
-        self.mainTab = QTabWidget(self)
-        self.studentsTab = StudentsTab()
-        self.classesTab = ClassesTab()
-        self.jobsTab = JobsTab()
-        self.assnTab = AssignmentsTab()
-        self.policyTab = PolicyTab()
-        self.expansionsTab = ExpansionsTab()
-        self.clubsTab = ClubsTab()
-        self.accountingTab = AccountingTab()
-        self.statsTab = StatsTab()
-        self.exitBtn = QPushButton()
+        self.tabs = QTabWidget(self)
+        self.students_tab = StudentsTab()
+        self.classes_tab = ClassesTab()
+        self.jobs_tab = JobsTab()
+        self.assign_tab = AssignmentsTab()
+        self.policy_tab = PolicyTab()
+        self.expansions_tab = ExpansionsTab()
+        self.clubs_tab = ClubsTab()
+        self.accounting_tab = AccountingTab()
+        self.stats_tab = StatsTab()
+        self.exit_btn = QPushButton()
 
         # create layouts
         layout = QVBoxLayout(self)
-#        geom.setHeight(geom.height()*0.98);
-#        geom.setWidth(geom.width()*0.98);
-#        exitBtn.setGeometry(geom.width()-70, geom.top(), 70, 25);
-#        self.mainTab.setGeometry(geom)
-        self.mainTab.setContentsMargins(0, 0, 0, 0)
+        self.tabs.setContentsMargins(0, 0, 0, 0)
         # TODO: translate
-        self.mainTab.addTab(self.classesTab, "Classes")
-        self.mainTab.addTab(self.studentsTab, "Students")
-        self.mainTab.addTab(self.jobsTab, "Jobs")
-        self.mainTab.addTab(self.assnTab, "Teacher Assignments")
-        self.mainTab.addTab(self.policyTab, "School Policy")
-        self.mainTab.addTab(self.expansionsTab, "Expansions")
-        self.mainTab.addTab(self.clubsTab, "Clubs")
-        self.mainTab.addTab(self.accountingTab, "Accounting")
-        self.mainTab.addTab(self.statsTab, "Stats")
-        layout.addWidget(self.mainTab)
-        layout.addWidget(self.exitBtn)
+        self.tabs.addTab(self.classes_tab, "Classes")
+        self.tabs.addTab(self.students_tab, "Students")
+        self.tabs.addTab(self.jobs_tab, "Jobs")
+        self.tabs.addTab(self.assign_tab, "Teacher Assignments")
+        self.tabs.addTab(self.policy_tab, "School Policy")
+        self.tabs.addTab(self.expansions_tab, "Expansions")
+        self.tabs.addTab(self.clubs_tab, "Clubs")
+        self.tabs.addTab(self.accounting_tab, "Accounting")
+        self.tabs.addTab(self.stats_tab, "Stats")
+        layout.addWidget(self.tabs)
+        layout.addWidget(self.exit_btn)
 
         fixedsize = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.exitBtn.setSizePolicy(fixedsize)
+        self.exit_btn.setSizePolicy(fixedsize)
 
         # configure widgets
-        self.mainTab.setStyleSheet(
+        self.tabs.setStyleSheet(
                 "QTabWidget { background-color: rgb(25, 45, 52);}")
 
-
         # connect signals
-        self.exitBtn.clicked.connect(self.parent().toggle_school_management)
+        self.exit_btn.clicked.connect(self.parent().toggle_school_management)
 
         # TODO: check if top part of tab handle reacts to interaction
 
@@ -684,8 +668,13 @@ class SchoolManagement(QWidget):
 
     def retranslateUi(self):
         tra = QApplication.translate
-        self.exitBtn.setText(tra("SchoolManagement", "Exit"))
-        # TODO: translate tab headers
+        ctxt = "SchoolManagement"
+        self.exit_btn.setText(tra(ctxt, "Exit"))
+        for idx, name in enumerate((
+                "Classes", "Students", "Jobs", "Teacher Assignments",
+                "School Policy", "Expansions", "Clubs", "Accounting",
+                "Stats")):
+            self.tabs.setTabText(idx, tra(ctxt, name))
 
 
 # --------------------------------------------------------------------------- #
@@ -693,35 +682,8 @@ class SchoolManagement(QWidget):
 # --------------------------------------------------------------------------- #
 world = cmn.world
 # TODO: fetch data from scenario
-teacher = ("April Raymund", "Beth Manili", "Carl Walker", "Carmen Smith",
-           "Claire Fuzushi", "Jessica Underwood", "Nina Parker",
-           "Ronda Bells", "Samantha Keller")
-subjectName = ("Anatomy Class", "Art", "Biology", "Bondage Class",
-               "Chemistry", "Computer Science", "Economics", "English",
-               "Geography", "History", "Math", "Music", "Philosophy",
-               "Physics", "Practical Sex Education", "Religion",
-               "School Sport", "Swimming", "Theoretical Sex Education"
-               )
-subjectFamilies = ("Mathematics", "Language Arts", "Natural Science",
-                   "Life Science", "Computer Studies", "Social Science",
-                   "Humanities", "Fine Arts", "Physical Education",
-                   "Sexual Education")
-balance = ["Monthly Loan:", "Staff Salary:"]
-balanceExample = ["-$16,188", "$2,811"]
-clubInfo = ["Members:", "time:", "Club President:", "Location:",
-            "Weekly Balance:"]
-clubInfoExample = ["12", "16:00-18:00", "Anette", "Sports Area", "-$50"]
-balanceItem = ["State Funding",
-    "Principal Salary",
-    "Staff Salary",
-    "Investigator",
-    "Building Maintenance",
-    "Cabaret Rental",
-    "Bathroom Spycam Pics",
-    "Changing Room Spycam Pics",
-    "Cheerleading Club Spycam Pics",
-    "Swim Club Spycam Pics",
-    "Secret Panty Exchange sales",
-    "Your Sister's rent"]
-balanceItemExample = [18945, 2585, -34563, -3000, -1684, -600, 252, 504,
-                      504, 352, 384, 400]
+#balance = ["Monthly Loan:", "Staff Salary:"]
+#balanceExample = ["-$16,188", "$2,811"]
+#clubInfo = ["Members:", "time:", "Club President:", "Location:",
+#            "Weekly Balance:"]
+#clubInfoExample = ["12", "16:00-18:00", "Anette", "Sports Area", "-$50"]

@@ -68,9 +68,45 @@ class WorldInterface(QObject):
         return ("7:50 - 9:20", "9:40 - 11:10", "11:30 - 13:00",
                 "14:30 - 16:00")
 
-    def classNames(self):
-        """Return the names of all classes of the school."""
+    def classes(self):
+        """Return all classes of the school."""
         return ("Class 1", "Class 2")
+
+    def teachers(self):
+        """Return all teachers, wether they are employees or not."""
+        return ("April Raymund", "Beth Manili", "Carl Walker", "Carmen Smith",
+                "Claire Fuzushi", "Jessica Underwood", "Nina Parker",
+                "Ronda Bells", "Samantha Keller")
+
+    def subjects(self):
+        """Return all school subjects."""
+        return ("Anatomy Class", "Art", "Biology", "Bondage Class",
+               "Chemistry", "Computer Science", "Economics", "English",
+               "Geography", "History", "Math", "Music", "Philosophy",
+               "Physics", "Practical Sex Education", "Religion",
+               "School Sport", "Swimming", "Theoretical Sex Education")
+
+    def subjectFamilies(self):
+        return ("Mathematics", "Language Arts", "Natural Science",
+                "Life Science", "Computer Studies", "Social Science",
+                "Humanities", "Fine Arts", "Physical Education",
+                "Sexual Education")
+
+    def balanceItems(self):
+        """Return the current balance items of the school."""
+        return (("State Funding", 18945),
+                ("Principal Salary", 2585),
+                ("Staff Salary", -34563),
+                ("Investigator", -3000),
+                ("Building Maintenance", -1684),
+                ("Cabaret Rental", -600),
+                ("Bathroom Spycam Pics", 252),
+                ("Changing Room Spycam Pics", 504),
+                ("Cheerleading Club Spycam Pics", 504),
+                ("Swim Club Spycam Pics", 352),
+                ("Secret Panty Exchange sales", 384),
+                ("Your Sister's rent", 400)
+                )
 
 
 # --------------------------------------------------------------------------- #
