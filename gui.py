@@ -5,6 +5,19 @@ Copyright (C) 2017 Radomir Matveev GPL 3.0+
 
 The Qt main loop is executed in the main function of this module.
 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>
+
 TODO: Style
 MainWin:
     setPalette(backgroundStyle());
@@ -45,6 +58,7 @@ from PyQt5.QtWidgets import (QApplication, QProgressBar, QStackedWidget,
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.Qt import QMainWindow
 
+import common as cmn
 from location_view import LocationView
 from school_management import SchoolManagement
 
@@ -70,27 +84,23 @@ class MainWin(QMainWindow):
         # create widgets
         w = QWidget(self)
         self.central_widget = w
-        self.time_display = QLabel(w)
-        self.date_display = QLabel(w)
-        self.location = QLabel(w)
+        self.time_lbl = QLabel(w)
+        self.date_lbl = QLabel(w)
+        self.location_lbl = QLabel(w)
         self.energy_bar = QProgressBar(w)
         self.arousal_bar = QProgressBar(w)
-        self.stackWidget = QStackedWidget(self)  # TODO: rename to stack_widget
-        self.locview = LocationView(self)  # TODO: rename to LocationView
+        self.widget_stack = QStackedWidget(self)
+        self.location_view = LocationView(self)
         self.school_management = SchoolManagement(self)
-        # TODO: is gridW necessary?
-        self.gridW = QWidget(w)  # TODO: rename to gridw
-
-        self.retranslateUi()
 
         # create layout
-        grid = QGridLayout(self.gridW)
+        grid = QGridLayout(self.central_widget)
         grid.setContentsMargins(0, 0, 0, 0)
-        grid.addWidget(self.time_display, 0, 5, 1, 2)
-        grid.addWidget(self.date_display, 0, 3, 1, 2)
+        grid.addWidget(self.time_lbl, 0, 5, 1, 2)
+        grid.addWidget(self.date_lbl, 0, 3, 1, 2)
         grid.addWidget(self.energy_bar, 0, 7, 1, 5)
         grid.addWidget(self.arousal_bar, 1, 7, 1, 5)
-        grid.addWidget(self.location, 2, 0, 3, 3)
+        grid.addWidget(self.location_lbl, 2, 0, 3, 3)
 
         for i, stat in enumerate(self.displaystat_hdr):
             val = self.displaystat_val[i]
@@ -105,33 +115,24 @@ class MainWin(QMainWindow):
 #            displaystat_val[i].setPalette(HHStyle::white_text);
 #            displaystat_val[i].setAlignment(Qt::AlignCenter);
 
-        self.stackWidget.addWidget(self.locview)
-        self.stackWidget.addWidget(self.school_management)
+        self.widget_stack.addWidget(self.location_view)
+        self.widget_stack.addWidget(self.school_management)
 
-        grid.addWidget(self.stackWidget, 4, 0, 50, 12)
+        grid.addWidget(self.widget_stack, 4, 0, 50, 12)
 
-#        self.gridW.setLayout(grid)
-#        self.gridW.setLayout(grid)
-#        vbox = QVBoxLayout(w)
-#        vbox.addWidget(self.gridW)
-        w.setLayout(grid)
         self.setCentralWidget(w)
 
         # configure window
         self.setWindowTitle("pyprinciple")
         geom = QDesktopWidget().availableGeometry()
-#        geom.adjust(10, 10, -20, -20)
-#        self.setGeometry(geom)
         self.setGeometry(100, 50, 800, 600)
 
         # configure widgets
-#        geom.setHeight(geom.height()*0.98)
-#        w.setGeometry(geom)
         w.setContentsMargins(0, 0, 0, 0)
 
         geom.setHeight(geom.height()*0.98)
 
-        self.gridW.setContentsMargins(0, 0, 0, 0)
+#        self.gridW.setContentsMargins(0, 0, 0, 0)
 #        gridW.setGeometry(geom)
         self.energy_bar.setValue(60)
         self.energy_bar.setTextVisible(False)
@@ -139,10 +140,10 @@ class MainWin(QMainWindow):
         self.arousal_bar.setTextVisible(False)
 
         geom.setHeight(geom.height()*10/11)  # removes space for header
-        self.location.setGeometry(geom)
+        self.location_lbl.setGeometry(geom)
         self.school_management.setGeometry(geom)
 
-        self.stackWidget.setCurrentIndex(0)
+        self.widget_stack.setCurrentIndex(0)
 
         # TODO only shown if window contains locationview
         for i in range(0, len(self.wait_times)):
@@ -150,40 +151,40 @@ class MainWin(QMainWindow):
             self.push_wait.append(pw)
             grid.addWidget(pw, 0, i, 2, 1)
 
-        self.dummyStartup()
+        for name in world.peopleAt("Your Home"):
+            self.location_view.addPerson(Person(name))
+
+        self.retranslateUi()
 
         self.show()
 
     def retranslateUi(self):
         tra = QApplication.translate
-        self.setWindowTitle(tra("HHSpp", "Main window"))
+        ctxt = "MainWin"
+        self.setWindowTitle(tra(ctxt, "Main window"))
         # TODO: use ordered dict instead
         displaystat = ["Education", "Happiness", "Loyalty", "Inhibition",
                        "Lust", "Corruption", "Reputation", "Students", "Money"]
-        self.displaystat_hdr = [tra("HHSpp", stat) for stat in displaystat]
-        self.displaystat_val = [tra("HHSpp", "30.1")
+        self.displaystat_hdr = [tra(ctxt, stat) for stat in displaystat]
+        self.displaystat_val = [tra(ctxt, "30.1")
                                 for stat in displaystat[:-2]]
-        self.displaystat_val.append(tra("HHSpp", "91"))
-        self.displaystat_val.append(tra("HHSpp", "$10,000"))
+        self.displaystat_val.append(tra(ctxt, "91"))
+        self.displaystat_val.append(tra(ctxt, "$10,000"))
 
         for waittime, pushbu in zip(self.wait_times, self.push_wait):
-            pushbu.setText(tra("HHSpp", "Wait %s min" % waittime))
+            pushbu.setText(tra(ctxt, "Wait %s min" % waittime))
 
         # TODO: translating dates and times is easier via datetime objects
-        self.time_display.setText(tra("HHSpp", "8:00"))
-        self.date_display.setText(tra("HHSpp", "Monday (1/1/2017)"))
-        self.location.setText(tra("HHSpp", "Home"))
-
-    def dummyStartup(self):
-        for name in ("Annette", "Peter"):
-            self.locview.addPerson(Person(name))
+        self.time_lbl.setText(tra(ctxt, "8:00"))
+        self.date_lbl.setText(tra(ctxt, "Monday (1/1/2017)"))
+        self.location_lbl.setText(tra(ctxt, "Home"))
 
     @pyqtSlot()
     def toggle_school_management(self):
-        if self.stackWidget.currentIndex() is 1:
-            self.stackWidget.setCurrentIndex(0)
+        if self.widget_stack.currentIndex() is 1:
+            self.widget_stack.setCurrentIndex(0)
         else:
-            self.stackWidget.setCurrentIndex(1)
+            self.widget_stack.setCurrentIndex(1)
 
 
 # --------------------------------------------------------------------------- #
@@ -202,3 +203,4 @@ def main():
 log = logging.getLogger(__name__)
 app = None  # the QApplication instance
 mainwin = None  # the main window of the application
+world = cmn.world

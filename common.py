@@ -71,6 +71,9 @@ class WorldInterface(QObject):
                 "Your Home": ("../Schools/NormalSchool/Images/Locations/" +
                               "Your Home/empty.jpg")
                 }
+        self.people_in_locations = {
+                "Your Home": ("Annette", "Peter")
+                }
 
     def schoolDays(self):
         """Returns a tuple of days were the school is open."""
@@ -131,6 +134,10 @@ class WorldInterface(QObject):
         path = path / self.location_images[location]
         path.resolve()
         return path
+
+    def peopleAt(self, location):
+        """List all people at the given location."""
+        return self.people_in_locations[location]
 
 
 # --------------------------------------------------------------------------- #
