@@ -40,11 +40,10 @@ import sys
 from collections import OrderedDict
 
 from PyQt5.QtWidgets import (QApplication, QProgressBar, QStackedWidget,
-                             QLabel, QWidget, QDialog, QDesktopWidget,
-                             QPushButton, QGridLayout, QVBoxLayout)
-from PyQt5.QtGui import QIcon
+                             QLabel, QWidget, QDesktopWidget,
+                             QPushButton, QGridLayout)
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.Qt import QRect, QMainWindow
+from PyQt5.Qt import QMainWindow
 
 from location_view import LocationView
 from school_management import SchoolManagement

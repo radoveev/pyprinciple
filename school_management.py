@@ -7,21 +7,18 @@ Copyright (C) 2017 Radomir Matveev GPL 3.0+
 # --------------------------------------------------------------------------- #
 # Import libraries
 # --------------------------------------------------------------------------- #
-from pathlib import Path
 from collections import OrderedDict
 
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton,
-                             QFrame, QListView, QListWidget, QListWidgetItem,
-                             QSizePolicy, QDialog, QGraphicsView, QTabWidget,
+                             QListView, QListWidget, QListWidgetItem,
+                             QSizePolicy, QGraphicsView, QTabWidget,
                              QTableWidget, QTableWidgetItem, QProgressBar,
                              QTextEdit, QColumnView, QCheckBox, QComboBox,
-                             QItemEditorFactory, QStyledItemDelegate,
+                             QStyledItemDelegate, QTableView, QHeaderView,
                              QHBoxLayout, QVBoxLayout, QGridLayout,
-                             QFormLayout,
-                             QTableView, QHeaderView, QSpacerItem)
-from PyQt5.QtCore import (Qt, pyqtSlot, QRect, QLocale, QVariant,
-                          QAbstractTableModel, QModelIndex)
-from PyQt5.QtGui import QBrush, QColor, QPalette, QFont, QPainter
+                             QFormLayout)
+from PyQt5.QtCore import Qt, pyqtSlot, QLocale
+from PyQt5.QtGui import QBrush, QColor, QPainter
 from PyQt5.QtChart import QChart, QChartView, QLineSeries
 
 from widgets import QPixmapLabel, QEditableTableModel
