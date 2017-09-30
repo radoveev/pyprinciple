@@ -53,4 +53,5 @@ people_list_style = """color: rgb(255, 110, 249);
     background-color: qlineargradient(spread:reflect,
                                       x1:0.495, y1:0, x2:1, y2:0,
                                       stop:0.409574 rgba(19, 34, 39, 255),
-                                      stop:1 rgba(25, 45, 52, 255));"""
+                                      stop:1 rgba(25, 45, 52, 255));
+    """

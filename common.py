@@ -96,10 +96,10 @@ class WorldInterface(QObject):
     def subjects(self):
         """Return all school subjects."""
         return ("Anatomy Class", "Art", "Biology", "Bondage Class",
-               "Chemistry", "Computer Science", "Economics", "English",
-               "Geography", "History", "Math", "Music", "Philosophy",
-               "Physics", "Practical Sex Education", "Religion",
-               "School Sport", "Swimming", "Theoretical Sex Education")
+                "Chemistry", "Computer Science", "Economics", "English",
+                "Geography", "History", "Math", "Music", "Philosophy",
+                "Physics", "Practical Sex Education", "Religion",
+                "School Sport", "Swimming", "Theoretical Sex Education")
 
     def subjectFamilies(self):
         return ("Mathematics", "Language Arts", "Natural Science",

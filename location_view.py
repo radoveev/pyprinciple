@@ -45,7 +45,7 @@ class LocationView(QWidget):
         # create widgets
         self.site_view = QScalingNoticeBoard(parent=self)
         self.person_interact = PersonInteraction(self)
-        self.people_view = QListView()
+        self.people_list = QListView()
         self.calendar_notes_lbl = QLabel()
         self.person_site_lbl = QLabel()
 
@@ -56,7 +56,7 @@ class LocationView(QWidget):
         grid.setColumnStretch(1, 7)
         grid.setColumnStretch(2, 2)
         grid.addWidget(self.site_view, 0, 0, 1, 2)
-        grid.addWidget(self.people_view, 0, 2, 1, 1)
+        grid.addWidget(self.people_list, 0, 2, 1, 1)
 
         hbox2 = QHBoxLayout()
         for _ in range(nrof_actions):
@@ -88,16 +88,16 @@ class LocationView(QWidget):
 
         model = QStringListModel()
 #        model.setStringList(self.forenames)
-        self.people_view.setModel(model)
-        self.people_view.setStyleSheet(style.people_list_style)
-        self.people_view.setFrameShape(QFrame.NoFrame)
-        self.people_view.setFrameShadow(QFrame.Plain)
-        self.people_view.setLineWidth(0)
-        self.people_view.setEditTriggers(QListView.NoEditTriggers)
-        self.people_view.setProperty("showDropIndicator", False)
-        self.people_view.setDefaultDropAction(Qt.IgnoreAction)
+        self.people_list.setModel(model)
+        self.people_list.setStyleSheet(style.people_list_style)
+        self.people_list.setFrameShape(QFrame.NoFrame)
+        self.people_list.setFrameShadow(QFrame.Plain)
+        self.people_list.setLineWidth(0)
+        self.people_list.setEditTriggers(QListView.NoEditTriggers)
+        self.people_list.setProperty("showDropIndicator", False)
+        self.people_list.setDefaultDropAction(Qt.IgnoreAction)
         selectionModel = QItemSelectionModel(model)
-        self.people_view.setSelectionModel(selectionModel)
+        self.people_list.setSelectionModel(selectionModel)
 
         self.setImage(world.locationImage(self.name))
 
@@ -131,7 +131,7 @@ class LocationView(QWidget):
 
     def addPerson(self, person):
         self.ppl.append(person)
-        self.people_view.model().setStringList(self.forenames)
+        self.people_list.model().setStringList(self.forenames)
 
     def removePerson(self, person):
         pass  # TODO
