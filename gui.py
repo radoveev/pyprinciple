@@ -50,6 +50,7 @@ MainWin:
 # --------------------------------------------------------------------------- #
 import logging
 import sys
+from pathlib import Path
 from collections import OrderedDict
 
 from PyQt5.QtWidgets import (QApplication, QProgressBar, QStackedWidget,
@@ -59,6 +60,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.Qt import QMainWindow
 
 import common as cmn
+import style
 from location_view import LocationView
 from school_management import SchoolManagement
 
@@ -135,9 +137,7 @@ class MainWin(QMainWindow):
 #        self.gridW.setContentsMargins(0, 0, 0, 0)
 #        gridW.setGeometry(geom)
         self.energy_bar.setValue(60)
-        self.energy_bar.setTextVisible(False)
         self.arousal_bar.setValue(48)
-        self.arousal_bar.setTextVisible(False)
 
         geom.setHeight(geom.height()*10/11)  # removes space for header
         self.location_lbl.setGeometry(geom)
@@ -193,6 +193,14 @@ class MainWin(QMainWindow):
 def main():
     global app, mainwin
     app = QApplication(sys.argv)
+
+    # load application style sheet from file
+    stylefile = (Path(QApplication.applicationDirPath()) /
+                 "../pythonsrc/appstyle.qss")
+    with stylefile.open() as f:
+        application_style = f.read()
+    app.setStyleSheet(application_style)
+
     mainwin = MainWin()
     sys.exit(app.exec_())
 
