@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QProgressBar,
                              QFormLayout, QGridLayout)
 from PyQt5.QtCore import QObject
 #from PyQt5.QtGui import QPixmap
-
+import os
 
 # --------------------------------------------------------------------------- #
 # Define classes
@@ -68,7 +68,7 @@ class WorldInterface(QObject):
                               )
                 }
         self.location_images = {
-                "Your Home": ("../Schools/NormalSchool/Images/Locations/" +
+                "Your Home": (os.path.dirname(os.path.abspath(__file__))+"/Schools/NormalSchool/Images/Locations/" +
                               "Your Home/empty.jpg")
                 }
         self.people_in_locations = {
