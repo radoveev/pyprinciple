@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QProgressBar,
                              QFormLayout, QGridLayout)
 from PyQt5.QtCore import QObject
 #from PyQt5.QtGui import QPixmap
-import os
+
 
 # --------------------------------------------------------------------------- #
 # Define classes
@@ -68,8 +68,7 @@ class WorldInterface(QObject):
                               )
                 }
         self.location_images = {
-                "Your Home": (os.path.dirname(os.path.abspath(__file__))+"/Schools/NormalSchool/Images/Locations/" +
-                              "Your Home/empty.jpg")
+                "Your Home": "Your Home/empty.jpg"
                 }
         self.people_in_locations = {
                 "Your Home": ("Annette", "Peter")
@@ -130,9 +129,8 @@ class WorldInterface(QObject):
 
     def locationImage(self, location):
         """Return the image for the given location."""
-        path = Path(QApplication.applicationDirPath())
-        path = path / self.location_images[location]
-        path.resolve()
+        path = schooldir / "Images/Locations" / self.location_images[location]
+        path = path.resolve(strict=True)  # raise error if file is not found
         return path
 
     def peopleAt(self, location):
@@ -156,3 +154,8 @@ def translate_form(form, context, labels):
 # Declare module globals
 # --------------------------------------------------------------------------- #
 world = WorldInterface()
+srcdir = Path(__file__).parent  # path to the pythonsrc directory
+schooldir = srcdir / "../Schools/NormalSchool/"
+schooldir = schooldir.resolve()
+if not schooldir.exists():
+    raise FileNotFoundError("Game ressources not found at: '%s'" % schooldir)
