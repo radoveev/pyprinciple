@@ -30,10 +30,13 @@ class LocationView(QWidget):
         self.ppl = []
         # create widgets
         self.stack = QVisiblyStackedWidget(self)
-        self.location_page = LocationPage()
+        self.location_page = QWidget()
+        self.location_widget = LocationPage(self.location_page)
         self.phone_page = SmartPhone()
 
         # create layout
+        box = QHBoxLayout(self.location_page)
+        box.addWidget(self.location_widget)
         self.stack.addWidget(self.location_page)
         self.stack.addWidget(self.phone_page)
         layout = QHBoxLayout(self)
@@ -41,15 +44,15 @@ class LocationView(QWidget):
 
         # connect signals
         mainwin = self.parent()
-        self.location_page.push_alt_views[0].clicked.connect(
+        self.location_widget.push_alt_views[0].clicked.connect(
                 mainwin.show_school_management
                 )
-        self.location_page.phone_btn.clicked.connect(self.toggle_phone)
+        self.location_widget.phone_btn.clicked.connect(self.toggle_phone)
         self.phone_page.return_btn.clicked.connect(self.toggle_phone)
 
     def addPerson(self, person):
         self.ppl.append(person)
-        self.location_page.people_list.model().setStringList(self.forenames)
+        self.location_widget.people_list.model().setStringList(self.forenames)
 
     def removePerson(self, person):
         pass  # TODO
