@@ -3,13 +3,6 @@
 
 Copyright (C) 2017 Radomir Matveev GPL 3.0+
 
-TODO: style
-    Calendar_notes.setPalette(HHStyle::white_text);
-    Calendar_notes.setAlignment(Qt::AlignCenter);
-
-    Person_site.setPalette(HHStyle::hdr_text);
-    Person_site.setAlignment(Qt::AlignCenter);
-
 """
 
 # --------------------------------------------------------------------------- #
@@ -45,9 +38,9 @@ class LocationView(QWidget):
         # create widgets
         self.site_view = QScalingNoticeBoard(parent=self)
         self.person_interact = PersonInteraction(self)
-        self.people_list = QListView()
-        self.calendar_notes_lbl = QLabel()
-        self.person_site_lbl = QLabel()
+        self.people_list = QListView(self)
+        self.calendar_notes_lbl = QLabel(self)
+        self.person_site_lbl = QLabel(self)
 
         # create layout
         grid = QGridLayout(self)
@@ -80,6 +73,9 @@ class LocationView(QWidget):
 
         # configure widgets
         self.setContentsMargins(0, 0, 0, 0)
+        self.person_site_lbl.setObjectName("text")  # use text style
+        self.calendar_notes_lbl.setObjectName("text")
+        self.calendar_notes_lbl.setAlignment(Qt.AlignCenter)
         maximized = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         maximized.setHorizontalStretch(0)
         maximized.setVerticalStretch(0)
@@ -90,9 +86,6 @@ class LocationView(QWidget):
 #        model.setStringList(self.forenames)
         self.people_list.setModel(model)
         self.people_list.setStyleSheet(style.people_list_style)
-        self.people_list.setFrameShape(QFrame.NoFrame)
-        self.people_list.setFrameShadow(QFrame.Plain)
-        self.people_list.setLineWidth(0)
         self.people_list.setEditTriggers(QListView.NoEditTriggers)
         self.people_list.setProperty("showDropIndicator", False)
         self.people_list.setDefaultDropAction(Qt.IgnoreAction)
@@ -102,20 +95,12 @@ class LocationView(QWidget):
         self.setImage(world.locationImage(self.name))
 
         # TODO: location buttons belong to a location
-        alt_view_btn = QPalette()
-        brush8 = QBrush(QColor(166, 202, 240, 255))
-        brush8.setStyle(Qt.SolidPattern)
-        alt_view_btn.setBrush(QPalette.Active, QPalette.Button, brush8)
-        alt_view_btn.setBrush(QPalette.Inactive, QPalette.Button, brush8)
-        alt_view_btn.setBrush(QPalette.Disabled, QPalette.Button, brush8)
-
         btn_size = (100, 35)
         for text, pos in world.locationButtons(self.name):
             pushbtn = QPushButton(self.site_view)
             pushbtn.setGeometry(*pos, *btn_size)
             pushbtn.setText(text)
             pushbtn.setToolTip(text)
-            pushbtn.setPalette(alt_view_btn)
             notice = self.site_view.addNotice(pushbtn)
             notice.setFixedGeometry(True)
             self.push_alt_views.append(pushbtn)

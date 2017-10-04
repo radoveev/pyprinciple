@@ -55,3 +55,8 @@ people_list_style = """color: rgb(255, 110, 249);
                                       stop:0.409574 rgba(19, 34, 39, 255),
                                       stop:1 rgba(25, 45, 52, 255));
     """
+big_font = QFont()
+big_font.setPointSize(11)
+big_font.setBold(True)
+big_font.setWeight(75)
+location_font = QFont("sans", 13)

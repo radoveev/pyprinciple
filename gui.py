@@ -17,32 +17,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
-
-TODO: Style
-MainWin:
-    setPalette(backgroundStyle());
-
-    QFont font("sans", 13);
-
-    QFont font1;
-    font1.setPointSize(11);
-    font1.setBold(true);
-    font1.setWeight(75);
-
-    time_display.setPalette(HHStyle::hdr_text);
-    time_display.setFont(font1);
-    time_display.setAlignment(Qt::AlignCenter);
-
-    date_display.setPalette(HHStyle::white_text);
-    date_display.setFont(font1);
-    date_display.setAlignment(Qt::AlignCenter);
-
-    energy_bar.setPalette(progressStyle(QColor(0, 255, 255, 255)));
-
-    arousal_bar.setPalette(progressStyle(QColor(255, 110, 249, 255)));
-
-    location.setPalette(HHStyle::white_text);
-    location.setFont(font);
 """
 
 # --------------------------------------------------------------------------- #
@@ -56,7 +30,7 @@ from collections import OrderedDict
 from PyQt5.QtWidgets import (QApplication, QProgressBar, QStackedWidget,
                              QLabel, QWidget, QDesktopWidget,
                              QPushButton, QGridLayout)
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import Qt, pyqtSlot
 from PyQt5.Qt import QMainWindow
 
 import common as cmn
@@ -96,13 +70,14 @@ class MainWin(QMainWindow):
         self.school_management = SchoolManagement(self)
 
         # create layout
+        self.retranslateUi()
         grid = QGridLayout(self.central_widget)
         grid.setContentsMargins(0, 0, 0, 0)
-        grid.addWidget(self.time_lbl, 0, 5, 1, 2)
-        grid.addWidget(self.date_lbl, 0, 3, 1, 2)
+        grid.addWidget(self.time_lbl,   0, 5, 1, 2)
+        grid.addWidget(self.date_lbl,   0, 3, 1, 2)
         grid.addWidget(self.energy_bar, 0, 7, 1, 5)
         grid.addWidget(self.arousal_bar, 1, 7, 1, 5)
-        grid.addWidget(self.location_lbl, 2, 0, 3, 3)
+        grid.addWidget(self.location_lbl, 2, 0, 2, 3)
 
         for i, stat in enumerate(self.displaystat_hdr):
             val = self.displaystat_val[i]
@@ -131,13 +106,25 @@ class MainWin(QMainWindow):
 
         # configure widgets
         w.setContentsMargins(0, 0, 0, 0)
+        w.setObjectName("central_widget")
 
         geom.setHeight(geom.height()*0.98)
+
+        self.time_lbl.setObjectName("text")  # use text style from style sheet
+        self.time_lbl.setFont(style.big_font)
+        self.time_lbl.setAlignment(Qt.AlignCenter)
+        self.date_lbl.setObjectName("text")
+        self.date_lbl.setFont(style.big_font)
+        self.date_lbl.setAlignment(Qt.AlignRight)
+        self.location_lbl.setObjectName("text")
+        self.location_lbl.setFont(style.location_font)
 
 #        self.gridW.setContentsMargins(0, 0, 0, 0)
 #        gridW.setGeometry(geom)
         self.energy_bar.setValue(60)
+        self.energy_bar.setObjectName("energy")
         self.arousal_bar.setValue(48)
+        self.arousal_bar.setObjectName("arousal")
 
         geom.setHeight(geom.height()*10/11)  # removes space for header
         self.location_lbl.setGeometry(geom)

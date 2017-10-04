@@ -1,1 +1,28 @@
-QProgressBar { qproperty-textVisible: false }
+QWidget { color: rgba(255, 255, 255, 255);
+          background-color: rgba(25, 45, 52, 255); }
+QLabel#text:active { color: rgba(255, 255, 255, 255)
+               }
+QLabel#text:disabled { color: rgba(190, 190, 190, 255)
+                 }
+QLabel#header:active { color: rgba(190, 190, 190, 255)
+               }
+QLabel#header:disabled { color: rgba(25, 25, 25, 255)
+                 }
+QListView { qproperty-frameShape: NoFrame;
+            /*qproperty-frameShadow: Plain;
+            qproperty-lineWidth: 0;*/
+           }
+QProgressBar { qproperty-textVisible: false;
+              }
+QProgressBar::chunk:disabled { background-color: rgba(25, 25, 25, 255);
+              }
+QProgressBar#energy::chunk:active {
+        background-color: rgba(0, 255, 255, 255);
+        }
+QProgressBar#arousal::chunk:active {
+        background-color: rgba(255, 110, 249, 255);
+        }
+QPushButton { min-width: 60px; min-height: 15px;
+              max-width: 90px; max-height: 30px;
+              background-color: rgba(166, 202, 240, 255);
+             }
