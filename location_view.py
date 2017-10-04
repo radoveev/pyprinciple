@@ -31,9 +31,7 @@ class LocationView(QWidget):
         self.name = "Your Home"  # the name of the shown location
         self.ppl = []
         self.push_alt_views = []
-        self.push_actions = []
         self.push_ctl = []
-        nrof_actions = 3
         nrof_controls = 2
         # create widgets
         self.site_view = QScalingNoticeBoard(parent=self)
@@ -41,6 +39,9 @@ class LocationView(QWidget):
         self.people_list = QListView(self)
         self.calendar_notes_lbl = QLabel(self)
         self.person_site_lbl = QLabel(self)
+        self.phone_btn = QPushButton(self)
+        self.inventory_btn = QPushButton(self)
+        self.map_btn = QPushButton(self)
 
         # create layout
         grid = QGridLayout(self)
@@ -51,12 +52,11 @@ class LocationView(QWidget):
         grid.addWidget(self.site_view, 0, 0, 1, 2)
         grid.addWidget(self.people_list, 0, 2, 1, 1)
 
-        hbox2 = QHBoxLayout()
-        for _ in range(nrof_actions):
-            pushbtn = QPushButton(self)
-            hbox2.addWidget(pushbtn)
-            self.push_actions.append(pushbtn)
-        grid.addLayout(hbox2, 1, 0, 1, 1)
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.phone_btn)
+        hbox.addWidget(self.inventory_btn)
+        hbox.addWidget(self.map_btn)
+        grid.addLayout(hbox, 1, 0, 1, 1)
 
         grid.addWidget(self.calendar_notes_lbl, 1, 1, 1, 1)
 
@@ -131,9 +131,9 @@ class LocationView(QWidget):
         self.calendar_notes_lbl.setText(
                 tra(ctxt, "No calendar notes for today")
                 )
-        self.push_actions[0].setText(tra(ctxt, "Smartphone"))
-        self.push_actions[1].setText(tra(ctxt, "Inventory"))
-        self.push_actions[2].setText(tra(ctxt, "Map"))
+        self.phone_btn.setText(tra(ctxt, "Smartphone"))
+        self.inventory_btn.setText(tra(ctxt, "Inventory"))
+        self.map_btn.setText(tra(ctxt, "Map"))
         self.push_ctl[0].setText(tra(ctxt, "Settings"))
         self.push_ctl[1].setText(tra(ctxt, "Debug"))
         btnnames = [data[0] for data in world.locationButtons(self.name)]
