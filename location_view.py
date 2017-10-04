@@ -109,7 +109,7 @@ class LocationView(QWidget):
 
         # connect signals
         self.push_alt_views[0].clicked.connect(
-                self.parent().toggle_school_management)
+                self.parent().show_school_management)
         selectionModel.selectionChanged.connect(self.on_selectionChanged)
 
         self.site_view.show()

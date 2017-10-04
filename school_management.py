@@ -660,7 +660,7 @@ class SchoolManagement(QWidget):
                 "QTabWidget { background-color: rgb(25, 45, 52);}")
 
         # connect signals
-        self.exit_btn.clicked.connect(self.parent().toggle_school_management)
+        self.exit_btn.clicked.connect(self.parent().show_location_view)
 
         # TODO: check if top part of tab handle reacts to interaction
 

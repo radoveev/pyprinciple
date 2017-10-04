@@ -167,11 +167,12 @@ class MainWin(QMainWindow):
         self.location_lbl.setText(tra(ctxt, "Home"))
 
     @pyqtSlot()
-    def toggle_school_management(self):
-        if self.widget_stack.currentIndex() is 1:
-            self.widget_stack.setCurrentIndex(0)
-        else:
-            self.widget_stack.setCurrentIndex(1)
+    def show_school_management(self):
+        self.widget_stack.setCurrentIndex(1)
+
+    @pyqtSlot()
+    def show_location_view(self):
+        self.widget_stack.setCurrentIndex(0)
 
 
 # --------------------------------------------------------------------------- #
