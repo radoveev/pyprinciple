@@ -183,21 +183,21 @@ class LocationPage(QWidget):
         self.person_interact.exec()
 
 
-class SmartPhone(QWidget):
+class SmartPhone(QScalingNoticeBoard):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # create widgets
         self.return_btn = QPushButton(self)
 
         # create layout
-        layout = QVBoxLayout(self)
-        layout.addWidget(self.return_btn)
+        self.addNotice(self.return_btn)
 
         # configure widgets
         self.retranslateUi()
-#        self.setAttribute(Qt.WA_NoSystemBackground, True)
-#        self.setAttribute(Qt.WA_TranslucentBackground, True)
-#        self.setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+        self.setStyleSheet("""QPixmapLabel { background: none; }""")
+        path = (cmn.schooldir /
+                "Images/EventPictures/Custom/SmartphoneBackground.png")
+        self.setPixmap(QPixmap(str(path)))
 
     def retranslateUi(self):
         tra = QApplication.translate
