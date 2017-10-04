@@ -15,7 +15,7 @@ from PyQt5.QtCore import (Qt, pyqtSlot, QItemSelection, QItemSelectionModel,
                           QStringListModel)
 from PyQt5.QtGui import QPixmap, QPalette, QBrush, QColor
 
-from widgets import QScalingNoticeBoard
+from widgets import QScalingNoticeBoard, QVisiblyStackedWidget
 import common as cmn
 import style
 from person_interaction import PersonInteraction
@@ -27,9 +27,39 @@ from person_interaction import PersonInteraction
 class LocationView(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.ppl = []
+        # create widgets
+        self.stack = QVisiblyStackedWidget(self)
+        self.location_page = LocationPage()
+
+        # create layout
+        self.stack.addWidget(self.location_page)
+        layout = QHBoxLayout(self)
+        layout.addWidget(self.stack)
+
+        # connect signals
+        mainwin = self.parent()
+        self.location_page.push_alt_views[0].clicked.connect(
+                mainwin.show_school_management
+                )
+
+    def addPerson(self, person):
+        self.ppl.append(person)
+        self.location_page.people_list.model().setStringList(self.forenames)
+
+    def removePerson(self, person):
+        pass  # TODO
+
+    @property
+    def forenames(self):
+        return [p.forename for p in self.ppl]
+
+
+class LocationPage(QWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         # TODO load this from the data layer
         self.name = "Your Home"  # the name of the shown location
-        self.ppl = []
         self.push_alt_views = []
         self.push_ctl = []
         nrof_controls = 2
@@ -108,18 +138,9 @@ class LocationView(QWidget):
         self.retranslateUi()
 
         # connect signals
-        self.push_alt_views[0].clicked.connect(
-                self.parent().show_school_management)
         selectionModel.selectionChanged.connect(self.on_selectionChanged)
 
         self.site_view.show()
-
-    def addPerson(self, person):
-        self.ppl.append(person)
-        self.people_list.model().setStringList(self.forenames)
-
-    def removePerson(self, person):
-        pass  # TODO
 
     def setImage(self, path):
         self.site_view.setPixmap(QPixmap(str(path)))
@@ -139,10 +160,6 @@ class LocationView(QWidget):
         btnnames = [data[0] for data in world.locationButtons(self.name)]
         for btn, text in zip(self.push_alt_views, btnnames):
             btn.setText(tra(ctxt, text))
-
-    @property
-    def forenames(self):
-        return [p.forename for p in self.ppl]
 
     @pyqtSlot(QItemSelection, QItemSelection)
     def on_selectionChanged(self, selected, deselected):
