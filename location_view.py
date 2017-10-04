@@ -10,7 +10,7 @@ Copyright (C) 2017 Radomir Matveev GPL 3.0+
 # --------------------------------------------------------------------------- #
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QSizePolicy,
                              QListView, QPushButton, QFrame,
-                             QGridLayout, QHBoxLayout)
+                             QGridLayout, QHBoxLayout, QVBoxLayout)
 from PyQt5.QtCore import (Qt, pyqtSlot, QItemSelection, QItemSelectionModel,
                           QStringListModel)
 from PyQt5.QtGui import QPixmap, QPalette, QBrush, QColor
@@ -31,9 +31,11 @@ class LocationView(QWidget):
         # create widgets
         self.stack = QVisiblyStackedWidget(self)
         self.location_page = LocationPage()
+        self.phone_page = SmartPhone()
 
         # create layout
         self.stack.addWidget(self.location_page)
+        self.stack.addWidget(self.phone_page)
         layout = QHBoxLayout(self)
         layout.addWidget(self.stack)
 
@@ -42,6 +44,8 @@ class LocationView(QWidget):
         self.location_page.push_alt_views[0].clicked.connect(
                 mainwin.show_school_management
                 )
+        self.location_page.phone_btn.clicked.connect(self.toggle_phone)
+        self.phone_page.return_btn.clicked.connect(self.toggle_phone)
 
     def addPerson(self, person):
         self.ppl.append(person)
@@ -53,6 +57,13 @@ class LocationView(QWidget):
     @property
     def forenames(self):
         return [p.forename for p in self.ppl]
+
+    @pyqtSlot()
+    def toggle_phone(self):
+        if self.stack.currentIndex() is 0:
+            self.stack.setCurrentIndex(1)
+        else:
+            self.stack.setCurrentIndex(0)
 
 
 class LocationPage(QWidget):
@@ -167,6 +178,28 @@ class LocationPage(QWidget):
 #        self.site_view.toggle_blur()
 #        self.person_interact.setVisible(True)
         self.person_interact.exec()
+
+
+class SmartPhone(QWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # create widgets
+        self.return_btn = QPushButton(self)
+
+        # create layout
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.return_btn)
+
+        # configure widgets
+        self.retranslateUi()
+#        self.setAttribute(Qt.WA_NoSystemBackground, True)
+#        self.setAttribute(Qt.WA_TranslucentBackground, True)
+#        self.setStyleSheet("background-color: rgba(255, 255, 255, 0);")
+
+    def retranslateUi(self):
+        tra = QApplication.translate
+        ctxt = "SmartPhone"
+        self.return_btn.setText((tra(ctxt, "Return")))
 
 
 # --------------------------------------------------------------------------- #
