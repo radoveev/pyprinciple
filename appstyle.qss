@@ -1,5 +1,6 @@
 QWidget { color: rgba(255, 255, 255, 255);
           background-color: rgba(25, 45, 52, 255); }
+
 QLabel#text:active { color: rgba(255, 255, 255, 255)
                }
 QLabel#text:disabled { color: rgba(190, 190, 190, 255)
@@ -26,3 +27,59 @@ QPushButton { min-width: 60px; min-height: 15px;
               max-width: 90px; max-height: 30px;
               background-color: rgba(166, 202, 240, 255);
              }
+
+/*
+    Customize tab widgets
+*/
+
+
+/*QTabWidget::pane {
+    border-top: 2px solid #C2C7CB;
+}
+
+QTabWidget::tab-bar {
+    left: 5px;
+}*/
+QTabBar::tab { color: rgba(255, 255, 255, 255);
+               background-color: rgba(25, 45, 52, 255);
+               border: 2px solid #C4C4C3;
+               border-bottom-color: #C2C7CB; /* same as the pane color */
+               border-top-left-radius: 4px;
+               border-top-right-radius: 4px;
+               min-width: 8ex;
+               padding: 2px;
+}
+QTabBar::tab:selected, QTabBar::tab:hover {
+        background-color: rgba(25, 45, 52, 255);
+}
+
+QTabBar::tab:selected {
+    border-color: #9B9B9B;
+    border-bottom-color: #C2C7CB; /* same as pane color */
+}
+
+QTabBar::tab:!selected {
+    margin-top: 2px; /* make non-selected tabs look smaller */
+}
+
+
+/*
+    Customize tables
+*/
+
+QTableView QTableCornerButton::section {
+    background-color: rgba(25, 45, 52, 255);
+    border: none;
+}
+
+QHeaderView::section {
+        color: rgba(255, 255, 255, 255);
+        background-color: rgba(25, 45, 52, 255);
+        padding-left: 4px;
+        border: none;
+}
+
+QHeaderView::section:checked
+{
+    background-color: red;
+}
