@@ -9,13 +9,14 @@ Copyright (C) 2017 Radomir Matveev GPL 3.0+
 # Import libraries
 # --------------------------------------------------------------------------- #
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QSizePolicy,
-                             QListView, QPushButton, QFrame,
-                             QGridLayout, QHBoxLayout, QVBoxLayout)
+                             QListView, QPushButton, QFrame, QStackedWidget,
+                             QGridLayout, QHBoxLayout, QVBoxLayout,
+                             QStackedLayout)
 from PyQt5.QtCore import (Qt, pyqtSlot, QItemSelection, QItemSelectionModel,
                           QStringListModel)
 from PyQt5.QtGui import QPixmap, QPalette, QBrush, QColor
 
-from widgets import QScalingNoticeBoard, QVisiblyStackedWidget
+from widgets import QScalingNoticeBoard
 import common as cmn
 import style
 from person_interaction import PersonInteraction
@@ -29,7 +30,7 @@ class LocationView(QWidget):
         super().__init__(*args, **kwargs)
         self.ppl = []
         # create widgets
-        self.stack = QVisiblyStackedWidget(self)
+        self.stack = QStackedWidget(self)
         self.location_page = QWidget()
         self.location_widget = LocationPage(self.location_page)
         self.phone_page = SmartPhone()
@@ -37,8 +38,11 @@ class LocationView(QWidget):
         # create layout
         box = QHBoxLayout(self.location_page)
         box.addWidget(self.location_widget)
+
+        self.stack.layout().setStackingMode(QStackedLayout.StackAll)
         self.stack.addWidget(self.location_page)
         self.stack.addWidget(self.phone_page)
+
         layout = QHBoxLayout(self)
         layout.addWidget(self.stack)
 
