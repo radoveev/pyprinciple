@@ -8,15 +8,17 @@ Copyright (C) 2017 Radomir Matveev GPL 3.0+
 # --------------------------------------------------------------------------- #
 # Import libraries
 # --------------------------------------------------------------------------- #
+#from string import Template
+
 from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QSizePolicy,
                              QListView, QPushButton, QFrame, QStackedWidget,
                              QGridLayout, QHBoxLayout, QVBoxLayout,
                              QStackedLayout)
-from PyQt5.QtCore import (Qt, pyqtSlot, QItemSelection, QItemSelectionModel,
-                          QStringListModel)
-from PyQt5.QtGui import QPixmap, QPalette, QBrush, QColor
+from PyQt5.QtCore import (Qt, pyqtSlot, QSize, QItemSelection,
+                          QItemSelectionModel, QStringListModel)
+from PyQt5.QtGui import QPixmap, QPalette, QBrush, QColor, QIcon
 
-from widgets import QScalingNoticeBoard
+from widgets import QScalingNoticeBoard, QIconPushButton
 import common as cmn
 import style
 from person_interaction import PersonInteraction
@@ -69,8 +71,10 @@ class LocationView(QWidget):
     def toggle_phone(self):
         if self.stack.currentIndex() is 0:
             self.stack.setCurrentIndex(1)
+            self.phone_page.setFocus()
         else:
             self.stack.setCurrentIndex(0)
+            self.setFocus()
 
 
 class LocationPage(QWidget):
@@ -170,11 +174,11 @@ class LocationPage(QWidget):
         self.calendar_notes_lbl.setText(
                 tra(ctxt, "No calendar notes for today")
                 )
-        self.phone_btn.setText(tra(ctxt, "Smartphone"))
-        self.inventory_btn.setText(tra(ctxt, "Inventory"))
-        self.map_btn.setText(tra(ctxt, "Map"))
+        self.phone_btn.setText(tra(ctxt, "&Smartphone"))
+        self.inventory_btn.setText(tra(ctxt, "&Inventory"))
+        self.map_btn.setText(tra(ctxt, "&Map"))
         self.push_ctl[0].setText(tra(ctxt, "Settings"))
-        self.push_ctl[1].setText(tra(ctxt, "Debug"))
+        self.push_ctl[1].setText(tra(ctxt, "&Debug"))
         btnnames = [data[0] for data in world.locationButtons(self.name)]
         for btn, text in zip(self.push_alt_views, btnnames):
             btn.setText(tra(ctxt, text))
@@ -191,22 +195,53 @@ class SmartPhone(QScalingNoticeBoard):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # create widgets
-        self.return_btn = QPushButton(self)
+        self.return_btn = QIconPushButton(self)
 
         # create layout
+        btnsize = QSize(70, 70)
+#        self.return_btn.setGeometry(510, 210, btnsize.width(),
+#                                    btnsize.height())
+        self.return_btn.setGeometry(117, 6, btnsize.width(),
+                                    btnsize.height())
         self.addNotice(self.return_btn)
 
         # configure widgets
         self.retranslateUi()
-        self.setStyleSheet("""QPixmapLabel { background: none; }""")
+
+        self.setEnabled(True)
+
+#        sheet = Template(
+#                """QPixmapLabel { background: none; }
+#                QPushButton { min-width: ${w}; min-height: ${h}px;
+#                              max-width: ${w}; max-height: ${h}px;
+#                             }
+#                """
+#                ).substitute(w=btnsize.width(), h=btnsize.height())
+        sheet = """QPixmapLabel { background: none; }
+                QPushButton { min-width: 0; min-height: 0;
+                              max-width: 16777000; max-height: 16777000;
+                             }
+                """
+        self.setStyleSheet(sheet)
+
+        path = cmn.resdir / "icons/SmartphoneOff.png"
+        pixmap = QPixmap(str(path))
+#        pixmap = pixmap.scaled(btnsize.width() - 5, btnsize.height() - 5,
+#                               transformMode=Qt.SmoothTransformation)
+        self.return_btn.setIcon(QIcon(pixmap))
+
         path = (cmn.schooldir /
                 "Images/EventPictures/Custom/SmartphoneBackground.png")
         self.setPixmap(QPixmap(str(path)))
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.return_btn.click()
+
     def retranslateUi(self):
         tra = QApplication.translate
         ctxt = "SmartPhone"
-        self.return_btn.setText((tra(ctxt, "Return")))
+        self.return_btn.setToolTip((tra(ctxt, "Stop using your smartphone")))
 
 
 # --------------------------------------------------------------------------- #
