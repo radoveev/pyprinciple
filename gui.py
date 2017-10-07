@@ -100,7 +100,7 @@ class MainWin(QMainWindow):
         self.setCentralWidget(w)
 
         # configure window
-        self.setWindowTitle("pyprinciple")
+        # self.setWindowTitle("pyprinciple") # it is set by retranslateUi() 
         geom = QDesktopWidget().availableGeometry()
         self.setGeometry(100, 50, 800, 600)
 
@@ -119,8 +119,8 @@ class MainWin(QMainWindow):
         self.location_lbl.setObjectName("text")
         self.location_lbl.setFont(style.location_font)
 
-#        self.gridW.setContentsMargins(0, 0, 0, 0)
-#        gridW.setGeometry(geom)
+        grid.setContentsMargins(0, 0, 0, 0)
+        grid.setGeometry(geom)
         self.energy_bar.setValue(60)
         self.energy_bar.setObjectName("energy")
         self.arousal_bar.setValue(48)
@@ -148,7 +148,7 @@ class MainWin(QMainWindow):
     def retranslateUi(self):
         tra = QApplication.translate
         ctxt = "MainWin"
-        self.setWindowTitle(tra(ctxt, "Main window"))
+        self.setWindowTitle(tra(ctxt, "pyPrinciple"))
         # TODO: use ordered dict instead
         displaystat = ["Education", "Happiness", "Loyalty", "Inhibition",
                        "Lust", "Corruption", "Reputation", "Students", "Money"]
