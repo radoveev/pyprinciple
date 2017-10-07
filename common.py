@@ -139,7 +139,9 @@ class WorldInterface(QObject):
 
     def phoneApps(self):
         """Return the smartphone apps in a list."""
-        return ["Calendar", "Journal", "Call someone", "Help menu"]
+        return [(tt, resdir / ("icons/%s" % fn)) for tt, fn in
+                (("Calendar", "calendar.png"), ("Journal", "journal.png"),
+                 ("Call someone", "call.png"), ("Help menu", "help.png"))]
 
 
 # --------------------------------------------------------------------------- #

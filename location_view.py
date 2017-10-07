@@ -221,12 +221,13 @@ class SmartPhone(QScalingNoticeBoard):
                 break
             for col in range(colcount):
                 try:
-                    tooltip = apps.pop()
+                    tooltip, iconpath = apps.pop()
                 except IndexError:
                     break
                 btn = QIconPushButton(self)
                 btn.setToolTip(tooltip)
                 btn.setGeometry(x, y, btnwidth, btnheight)
+                btn.setIcon(QIcon(QPixmap(str(iconpath))))
                 self.addNotice(btn)
                 x += colpad + btnwidth
             y += rowpad + btnheight
