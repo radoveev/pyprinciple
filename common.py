@@ -137,6 +137,10 @@ class WorldInterface(QObject):
         """List all people at the given location."""
         return self.people_in_locations[location]
 
+    def phoneApps(self):
+        """Return the smartphone apps in a list."""
+        return ["Calendar", "Journal", "Call someone", "Help menu"]
+
 
 # --------------------------------------------------------------------------- #
 # Define functions

@@ -196,14 +196,40 @@ class SmartPhone(QScalingNoticeBoard):
         super().__init__(*args, **kwargs)
         # create widgets
         self.return_btn = QIconPushButton(self)
+        self.display = QLabel(self)
 
         # create layout
-        btnsize = QSize(70, 70)
-#        self.return_btn.setGeometry(510, 210, btnsize.width(),
-#                                    btnsize.height())
-        self.return_btn.setGeometry(117, 6, btnsize.width(),
-                                    btnsize.height())
+        btnwidth = 70
+        btnheight = 70
+#        self.return_btn.setGeometry(510, 210, btnwidth,
+#                                    btnheight)
+        self.return_btn.setGeometry(117, 6, btnwidth, btnheight)
         self.addNotice(self.return_btn)
+
+        # add apps buttons to display
+        # display geometry is (35, 190, 565, 770)
+        rowcount = 770 // btnheight
+        colcount = 565 // btnwidth
+        rowpad = (770 - ((rowcount - 4) * btnheight)) // (rowcount + 1)
+        colpad = (565 - ((colcount - 4) * btnwidth)) // (colcount + 1)
+
+        x = colpad + 45
+        y = rowpad + 205
+        apps = world.phoneApps()
+        for row in range(rowcount):
+            if not apps:
+                break
+            for col in range(colcount):
+                try:
+                    tooltip = apps.pop()
+                except IndexError:
+                    break
+                btn = QIconPushButton(self)
+                btn.setToolTip(tooltip)
+                btn.setGeometry(x, y, btnwidth, btnheight)
+                self.addNotice(btn)
+                x += colpad + btnwidth
+            y += rowpad + btnheight
 
         # configure widgets
         self.retranslateUi()
@@ -216,8 +242,9 @@ class SmartPhone(QScalingNoticeBoard):
 #                              max-width: ${w}; max-height: ${h}px;
 #                             }
 #                """
-#                ).substitute(w=btnsize.width(), h=btnsize.height())
+#                ).substitute(w=btnwidth, h=btnheight)
         sheet = """QPixmapLabel { background: none; }
+                .QLabel { background: none; }
                 QPushButton { min-width: 0; min-height: 0;
                               max-width: 16777000; max-height: 16777000;
                              }
@@ -226,7 +253,7 @@ class SmartPhone(QScalingNoticeBoard):
 
         path = cmn.resdir / "icons/SmartphoneOff.png"
         pixmap = QPixmap(str(path))
-#        pixmap = pixmap.scaled(btnsize.width() - 5, btnsize.height() - 5,
+#        pixmap = pixmap.scaled(btnwidth - 5, btnheight - 5,
 #                               transformMode=Qt.SmoothTransformation)
         self.return_btn.setIcon(QIcon(pixmap))
 
