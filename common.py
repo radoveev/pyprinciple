@@ -155,7 +155,11 @@ def translate_form(form, context, labels):
 # --------------------------------------------------------------------------- #
 world = WorldInterface()
 srcdir = Path(__file__).parent  # path to the pythonsrc directory
-schooldir = srcdir / "../Schools/NormalSchool/"
+resdir = srcdir / "../ressources/"
+resdir = resdir.resolve()
+if not resdir.exists():
+    raise FileNotFoundError("Game ressources not found at: '%s'" % resdir)
+schooldir = resdir / "Schools/NormalSchool/"
 schooldir = schooldir.resolve()
 if not schooldir.exists():
-    raise FileNotFoundError("Game ressources not found at: '%s'" % schooldir)
+    raise FileNotFoundError("HHS+ ressources not found at: '%s'" % schooldir)
