@@ -101,7 +101,7 @@ class MainWin(QMainWindow):
 
         # configure window
 #        geom = QDesktopWidget().availableGeometry()
-        self.setGeometry(100, 50, 800, 600)
+        self.setGeometry(100, 50, 1024, 768)
 
         # configure widgets
         w.setContentsMargins(0, 0, 0, 0)
