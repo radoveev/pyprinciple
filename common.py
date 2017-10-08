@@ -130,7 +130,9 @@ class WorldInterface(QObject):
     def locationImage(self, location):
         """Return the image for the given location."""
         path = schooldir / "Images/Locations" / self.location_images[location]
-        path = path.resolve()  # raise error if file is not found
+        path = path.resolve()
+        if not path.exists():
+            raise FileNotFoundError("Image not found at: '%s'" % path)
         return path
 
     def peopleAt(self, location):
