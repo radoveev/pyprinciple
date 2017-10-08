@@ -100,15 +100,12 @@ class MainWin(QMainWindow):
         self.setCentralWidget(w)
 
         # configure window
-        # self.setWindowTitle("pyprinciple") # it is set by retranslateUi() 
-        geom = QDesktopWidget().availableGeometry()
+#        geom = QDesktopWidget().availableGeometry()
         self.setGeometry(100, 50, 800, 600)
 
         # configure widgets
         w.setContentsMargins(0, 0, 0, 0)
         w.setObjectName("central_widget")
-
-        geom.setHeight(geom.height()*0.98)
 
         self.time_lbl.setObjectName("text")  # use text style from style sheet
         self.time_lbl.setFont(style.big_font)
@@ -119,16 +116,10 @@ class MainWin(QMainWindow):
         self.location_lbl.setObjectName("text")
         self.location_lbl.setFont(style.location_font)
 
-        grid.setContentsMargins(0, 0, 0, 0)
-        grid.setGeometry(geom)
         self.energy_bar.setValue(60)
         self.energy_bar.setObjectName("energy")
         self.arousal_bar.setValue(48)
         self.arousal_bar.setObjectName("arousal")
-
-        geom.setHeight(geom.height()*10/11)  # removes space for header
-        self.location_lbl.setGeometry(geom)
-        self.school_management.setGeometry(geom)
 
         self.widget_stack.setCurrentIndex(0)
 
